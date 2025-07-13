@@ -34,6 +34,7 @@ class ActionButton extends StatelessWidget {
               : AppText(
                   btnText,
                   fontWeight: FontWeight.bold,
+                  fontSize: 18,
                   fontColor: AppColors.creamWhite,
                 ),
         ),

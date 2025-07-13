@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:rive/rive.dart';
+import 'package:test_sm/src/components/AnimatedDialogs.dart';
 import 'package:test_sm/src/components/Button.dart';
 import 'package:test_sm/src/components/Text.dart';
+import 'package:test_sm/src/components/TextField.dart';
+import 'package:test_sm/src/constants/Animations.dart';
 import 'package:test_sm/src/constants/Colors.dart';
 import 'package:test_sm/src/constants/Regex.dart';
 import 'package:test_sm/src/helpers/NavHelper.dart';
 import 'package:test_sm/src/utils/utils.dart';
 import 'package:test_sm/src/views/auth/LoginScreen.dart';
+import 'package:test_sm/src/views/home/HomeScreen.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -22,7 +26,71 @@ class _SignupScreenState extends State<SignupScreen> {
   final _formKey = GlobalKey<FormState>();
 
   bool _isPasswordVisible = false;
-  final bool _isLoading = false;
+  bool _isLoading = false;
+
+  _signup() async {
+    if (!_formKey.currentState!.validate()) return;
+    setState(() => _isLoading = true);
+
+    await Future.delayed(Duration(seconds: 2));
+    setState(() => _isLoading = false);
+    _showSuccess();
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    _nameController.dispose();
+
+    super.dispose();
+  }
+
+  _showSuccess() async {
+    await AnimatedDialogs.showTransitionDialog(
+      dismissible: false,
+      Padding(
+        padding: const EdgeInsets.symmetric(vertical: 24.0, horizontal: 15),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Center(
+              child: SizedBox(
+                height: 200,
+                width: 300,
+                child: RiveAnimation.asset(
+                  AppAnims.successSignup,
+                  fit: BoxFit.cover,
+                  alignment: Alignment.center,
+                ),
+              ),
+            ),
+            Utils.vertS(20),
+
+            AppText(
+              'Successfully Registered',
+              fontSize: 28,
+              fontWeight: FontWeight.bold,
+            ),
+            Utils.vertS(10),
+            AppText(
+              'Your account has been registered successfully, now let’s enjoy our features!',
+              fontSize: 16,
+              fontColor: AppColors.placeHolder,
+            ),
+            Utils.vertS(25),
+            ActionButton(
+              isLoading: _isLoading,
+              btnText: 'Continue',
+              btnTap: () => NavHelper.removeAllAndOpen(HomeScreen()),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -88,7 +156,7 @@ class _SignupScreenState extends State<SignupScreen> {
           AutofillGroup(
             child: Column(
               children: [
-                _buildTextField(
+                AppTextField(
                   controller: _emailController,
                   label: "Email Address",
                   isPassword: false,
@@ -104,7 +172,7 @@ class _SignupScreenState extends State<SignupScreen> {
                   },
                 ),
                 Utils.vertS(20),
-                _buildTextField(
+                AppTextField(
                   controller: _nameController,
                   label: "Full Name",
                   isPassword: false,
@@ -117,11 +185,11 @@ class _SignupScreenState extends State<SignupScreen> {
                   },
                 ),
                 Utils.vertS(20),
-                _buildTextField(
+                AppTextField(
                   label: "Password",
                   hintText: "e.g. 123456789",
                   controller: _passwordController,
-                  isPassword: true,
+                  isPassword: _isPasswordVisible,
                   autofillHints: const [AutofillHints.password],
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -129,12 +197,19 @@ class _SignupScreenState extends State<SignupScreen> {
                     }
                     return null;
                   },
+                  visibility: true,
+                  onSuffixTap: () {
+                    setState(() => _isPasswordVisible = !_isPasswordVisible);
+                  },
                 ),
-                Utils.vertS(10),
+
+                Utils.vertS(20),
                 ValueListenableBuilder(
                   valueListenable: _passwordController,
                   builder: (context, value, _) {
                     return Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         passwordRegex.hasMatch(value.text.trim())
                             ? Icon(
@@ -142,12 +217,15 @@ class _SignupScreenState extends State<SignupScreen> {
                                 color: Colors.green,
                               )
                             : Icon(Icons.remove_circle_outline_rounded),
-
-                        AppText(
-                          "At least 8 characters with a combination of letters and numbers",
-                          fontColor: passwordRegex.hasMatch(value.text.trim())
-                              ? Colors.green
-                              : AppColors.semiDark,
+                        Utils.horiS(8),
+                        Flexible(
+                          child: AppText(
+                            "At least 8 characters with a combination of letters and numbers",
+                            fontColor: passwordRegex.hasMatch(value.text.trim())
+                                ? Colors.green
+                                : AppColors.semiDark,
+                            textAlignment: TextAlign.start,
+                          ),
                         ),
                       ],
                     );
@@ -161,59 +239,12 @@ class _SignupScreenState extends State<SignupScreen> {
           ActionButton(
             isLoading: _isLoading,
             btnText: 'SIGN UP',
-            btnTap: () {},
+            btnTap: () => _signup(),
           ),
 
           _buildLoginPrompt(),
         ],
       ),
-    );
-  }
-
-  Widget _buildTextField({
-    required TextEditingController controller,
-    required bool isPassword,
-    required String label,
-    Iterable<String>? autofillHints,
-    String? Function(String?)? validator,
-    String? hintText,
-  }) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        AppText(label, fontSize: 16, fontWeight: FontWeight.w700),
-        Utils.vertS(10),
-        TextFormField(
-          controller: controller,
-          obscureText: isPassword ? !_isPasswordVisible : false,
-          style: const TextStyle(color: AppColors.semiDark),
-          autofillHints: autofillHints,
-          decoration: InputDecoration(
-            hintText: hintText,
-            hintStyle: GoogleFonts.inter(fontSize: 14, color: Colors.grey[700]),
-            suffixIcon: isPassword
-                ? IconButton(
-                    icon: Icon(
-                      _isPasswordVisible
-                          ? Icons.visibility_off
-                          : Icons.visibility,
-                      color: Colors.grey[700],
-                    ),
-                    onPressed: () {
-                      setState(() => _isPasswordVisible = !_isPasswordVisible);
-                    },
-                  )
-                : null,
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 20,
-            ),
-          ),
-          validator: validator,
-        ),
-      ],
     );
   }
 

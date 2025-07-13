@@ -22,7 +22,7 @@ class _SplashScreenState extends State<SplashScreen> {
     // TODO: implement initState
     super.initState();
     Future.delayed(Duration(seconds: 3), () {
-      NavHelper.removeAllAndOpen(OnboardingScreen());
+      _navigate();
     });
   }
 
@@ -32,7 +32,7 @@ class _SplashScreenState extends State<SplashScreen> {
     if (isFirstTime) {
       NavHelper.removeAllAndOpen(OnboardingScreen());
     } else {
-      NavHelper.removeAllAndOpen(LoginScreen());
+      NavHelper.removeAllAndOpen(LoginScreen(isFirstTime: isFirstTime));
     }
   }
 

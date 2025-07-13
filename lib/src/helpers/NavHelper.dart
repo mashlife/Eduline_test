@@ -5,12 +5,16 @@ class NavHelper {
   static final GlobalKey<NavigatorState> _navigatorKey =
       GlobalKey<NavigatorState>();
 
-  static addWithAnimation(Widget widget, {Function? callback}) {
+  static addWithAnimation(
+    Widget widget, {
+    Function? callback,
+    int duration = 300,
+  }) {
     navigatorKey.currentState!
         .push(
           PageRouteBuilder(
             pageBuilder: (context, animation, secondaryAnimation) => widget,
-            transitionDuration: Duration(milliseconds: 600),
+            transitionDuration: Duration(milliseconds: duration),
             transitionsBuilder:
                 (context, animation, secondaryAnimation, child) {
                   const begin = 0.0;
@@ -34,12 +38,12 @@ class NavHelper {
         });
   }
 
-  static replace(Widget widget, {Function? callback}) {
+  static replace(Widget widget, {Function? callback, int duration = 300}) {
     navigatorKey.currentState!
         .pushReplacement(
           PageRouteBuilder(
             pageBuilder: (context, animation, secondaryAnimation) => widget,
-            transitionDuration: Duration(milliseconds: 600),
+            transitionDuration: Duration(milliseconds: duration),
 
             transitionsBuilder:
                 (context, animation, secondaryAnimation, child) {
@@ -68,13 +72,22 @@ class NavHelper {
     navigatorKey.currentState!.pop(value ?? false);
   }
 
-  static removeAllAndOpen(Widget widget) {
+  static removeAllAndOpen(Widget widget, {int duration = 300}) {
     navigatorKey.currentState!.pushAndRemoveUntil(
       PageRouteBuilder(
         pageBuilder: (context, animation, secondaryAnimation) => widget,
-        transitionDuration: Duration(milliseconds: 600),
+        transitionDuration: Duration(milliseconds: duration),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          return child;
+          const begin = 0.0;
+          const end = 1.0;
+          const curve = Curves.easeOutCubic;
+
+          var tween = Tween(
+            begin: begin,
+            end: end,
+          ).chain(CurveTween(curve: curve));
+
+          return FadeTransition(opacity: animation.drive(tween), child: child);
         },
       ),
       (Route<dynamic> route) => false,

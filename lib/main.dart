@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:test_sm/src/constants/Keys.dart';
 import 'package:test_sm/src/helpers/NavHelper.dart';
-import 'package:test_sm/src/views/auth/SignupScreen.dart';
+import 'package:test_sm/src/views/language/LanguageScreen.dart';
 
 void main() {
   runApp(const MainApp());
@@ -13,7 +14,9 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       navigatorKey: NavHelper.navigatorKey,
-      home: SignupScreen(),
+      scaffoldMessengerKey: scaffoldMessengerKey,
+
+      home: LanguageScreen(),
     );
   }
 }
