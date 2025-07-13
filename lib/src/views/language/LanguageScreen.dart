@@ -1,11 +1,10 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:test_sm/src/components/Button.dart';
 import 'package:test_sm/src/components/Text.dart';
 import 'package:test_sm/src/constants/Colors.dart';
 import 'package:test_sm/src/helpers/NavHelper.dart';
+import 'package:test_sm/src/models/LanguageModel.dart';
 import 'package:test_sm/src/utils/utils.dart';
 import 'package:test_sm/src/views/home/HomeScreen.dart';
 
@@ -55,27 +54,12 @@ class _LanguageScreenState extends State<LanguageScreen> {
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: SizedBox(
-        child: Stack(
-          children: [
-            SizedBox(
-              height: 80,
-
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                child: SizedBox(height: 80, width: double.infinity),
-              ),
-            ),
-
-            ActionButton(
-              isLoading: false,
-              btnText: 'Continue',
-              btnTap: () {
-                NavHelper.removeAllAndOpen(HomeScreen());
-              },
-            ),
-          ],
-        ),
+      floatingActionButton: ActionButton(
+        isLoading: false,
+        btnText: 'Continue',
+        btnTap: () {
+          NavHelper.removeAllAndOpen(HomeScreen());
+        },
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -179,25 +163,6 @@ class _LanguageScreenState extends State<LanguageScreen> {
           ),
         ),
       ),
-    );
-  }
-}
-
-class LanguageModel {
-  String name;
-  String code;
-  bool selected;
-  LanguageModel({
-    required this.name,
-    required this.code,
-    required this.selected,
-  });
-
-  LanguageModel copyWith({String? name, String? code, bool? selected}) {
-    return LanguageModel(
-      name: name ?? this.name,
-      code: code ?? this.code,
-      selected: selected ?? this.selected,
     );
   }
 }

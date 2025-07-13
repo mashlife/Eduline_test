@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:test_sm/src/constants/Keys.dart';
 import 'package:test_sm/src/helpers/NavHelper.dart';
-import 'package:test_sm/src/views/language/LanguageScreen.dart';
+import 'package:test_sm/src/views/splash-screen/SplashScreen.dart';
 
 void main() {
   runApp(const MainApp());
@@ -16,7 +16,7 @@ class MainApp extends StatelessWidget {
       navigatorKey: NavHelper.navigatorKey,
       scaffoldMessengerKey: scaffoldMessengerKey,
 
-      home: LanguageScreen(),
+      home: SplashScreen(),
     );
   }
 }

@@ -8,7 +8,7 @@ class NavHelper {
   static addWithAnimation(
     Widget widget, {
     Function? callback,
-    int duration = 300,
+    int duration = 250,
   }) {
     navigatorKey.currentState!
         .push(
@@ -38,7 +38,7 @@ class NavHelper {
         });
   }
 
-  static replace(Widget widget, {Function? callback, int duration = 300}) {
+  static replace(Widget widget, {Function? callback, int duration = 250}) {
     navigatorKey.currentState!
         .pushReplacement(
           PageRouteBuilder(
@@ -72,7 +72,7 @@ class NavHelper {
     navigatorKey.currentState!.pop(value ?? false);
   }
 
-  static removeAllAndOpen(Widget widget, {int duration = 300}) {
+  static removeAllAndOpen(Widget widget, {int duration = 250}) {
     navigatorKey.currentState!.pushAndRemoveUntil(
       PageRouteBuilder(
         pageBuilder: (context, animation, secondaryAnimation) => widget,
